@@ -8,7 +8,6 @@ import Clckwrks.IrcBot.PreProcess   (ircBotCmd)
 import Clckwrks.IrcBot.Types
 import Clckwrks.IrcBot.URL
 import Control.Applicative           ((<$>))
-import Control.Concurrent            (ThreadId, killThread)
 import Control.Exception             (bracket, finally)
 import Control.Monad.Reader          (ReaderT(..), MonadReader(..))
 import Data.Acid                     (AcidState, query)
@@ -39,13 +38,6 @@ data IrcBotConfig = IrcBotConfig
     { ircBotLogDirectory :: FilePath -- ^ directory in which to store irc logs
     , ircBotState        :: AcidState IrcBotState
     , ircBotClckURL      :: ClckURL -> [(T.Text, Maybe T.Text)] -> T.Text
-    , ircBotPageTemplate :: ( EmbedAsChild (Clck ClckURL) headers
-                            , EmbedAsChild (Clck ClckURL) body
-                            ) =>
-                            String
-                         -> headers
-                         -> body
-                         -> XMLGenT (Clck IrcBotURL) XML
     , ircReconnect       :: IO ()
     }
 
@@ -88,7 +80,7 @@ instance (Monad m) => MonadReader IrcBotConfig (IrcBotT m) where
 instance (Functor m, Monad m) => GetAcidState (IrcBotT m) IrcBotState where
     getAcidState =
         ircBotState <$> ask
-
+{-
 withIrcBotConfig :: Maybe FilePath         -- ^ base path to state dir
                  -> IrcConfig              -- ^ initial 'IrcConfig' to use when creating database for the first time
                  -> (forall headers body.
@@ -119,23 +111,12 @@ withIrcBotConfig mBasePath initIrcConfig pageTemplate' ircBotLogDir f =
               (tids, reconnect) <- simpleBot botConf ircParts
               (f (IrcBotConfig { ircBotLogDirectory = ircBotLogDir
                                , ircBotState        = ircBot
-                               , ircBotClckURL      = undefined
-                               , ircBotPageTemplate = pageTemplate'
+--                               , ircBotClckURL      = undefined
+--                               , ircBotPageTemplate = pageTemplate'
                                , ircReconnect       = reconnect
                                })) `finally` (mapM_ killThread tids)
+-}
 
-
-initParts :: (BotMonad m) =>
-             Set String  -- ^ set of channels to join
-          -> IO [m ()]
-initParts chans =
-    do (_, channelsPart) <- initChannelsPart chans
-       return [ pingPart
-              , nickUserPart
-              , channelsPart
-              , dicePart
-              , helloPart
-              ]
 
 addIrcBotAdminMenu :: ClckT IrcBotURL IO ()
 addIrcBotAdminMenu =

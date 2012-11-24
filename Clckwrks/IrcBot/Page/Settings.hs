@@ -24,7 +24,7 @@ import Network.IRC.Bot          (User(..))
 import Numeric                  (readDec)
 import Text.Reform              ((++>), mapView, transformEither)
 import Text.Reform.Happstack    (reform)
-import Text.Reform.HSP.String   (inputText, label, inputSubmit, form)
+import Text.Reform.HSP.String   (inputCheckbox, inputText, label, inputSubmit, form)
 import Web.Routes               (showURL)
 
 ircBotSettings :: IrcBotURL -> IrcBotM Response
@@ -44,7 +44,7 @@ ircBotSettings here =
 
 ircBotSettingsForm :: IrcConfig -> IrcBotForm IrcConfig
 ircBotSettingsForm IrcConfig{..} =
-     ul ((IrcConfig <$> host <*> port <*> nick <*> cp <*> user <*> channels) <* inputSubmit "update")
+     ul ((IrcConfig <$> host <*> port <*> nick <*> cp <*> user <*> channels <*> enabled) <* inputSubmit "update")
     where
       host     = li $ label "irc server" ++> inputText (ircHost)
       port     = li $ label "irc port"   ++> inputText (show ircPort) `transformEither` toWord16
@@ -56,6 +56,7 @@ ircBotSettingsForm IrcConfig{..} =
       rlnm     = li $ label "realname"   ++> inputText (realname ircUser)
       user     = User <$> usrnm <*> hstnm <*> srvrnm <*> rlnm
       channels = li $ label "channels (comma separated)"   ++> inputText (fromSet ircChannels) `transformEither` toSet
+      enabled  = li $ label "enable bot" ++> inputCheckbox ircEnabled
 
       -- markup
       li :: IrcBotForm a -> IrcBotForm a

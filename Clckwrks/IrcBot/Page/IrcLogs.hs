@@ -1,3 +1,4 @@
+{-# LANGUAGE OverloadedStrings #-}
 {-# OPTIONS_GHC -F -pgmFtrhsx #-}
 module Clckwrks.IrcBot.Page.IrcLogs where
 

@@ -7,6 +7,7 @@ import Clckwrks
 import Clckwrks.IrcBot.Monad
 import Clckwrks.IrcBot.Page.Template (template)
 import Data.List (sort)
+import Data.Text (pack)
 import Data.Text.IO as T (readFile)
 import Happstack.Server.FileServe.BuildingBlocks (isSafePath)
 import System.Directory
@@ -22,7 +23,7 @@ ircLog logFile =
            ".txt" ->
                do logDir <- ircBotLogDirectory <$> ask
                   c      <- liftIO $ T.readFile (logDir </> logFile)
-                  template logFile () <pre><% c %></pre>
+                  template (pack logFile) () <pre><% c %></pre>
            ".html" ->
                do logDir <- ircBotLogDirectory <$> ask
                   serveFile (asContentType "text/html; charset=UTF-8") (logDir </> logFile)
