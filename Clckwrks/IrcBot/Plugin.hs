@@ -103,9 +103,7 @@ ircBotPlugin = Plugin
     , pluginInit       = ircBotInit
     , pluginDepends    = []
     , pluginToPathInfo = toPathInfo
-    , pluginPostHook   =
-         do dd <- liftIO getDataDir
-            addPluginPath (pluginName ircBotPlugin) dd
+    , pluginPostHook   = return ()
     }
 
 plugin :: ClckPlugins -- ^ plugins
