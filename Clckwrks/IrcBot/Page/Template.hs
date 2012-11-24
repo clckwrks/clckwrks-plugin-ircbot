@@ -10,7 +10,7 @@ import Control.Monad.Reader
 import Data.Text (Text)
 import HSP hiding (escape)
 import Happstack.Server.HSP.HTML ()
-import Web.Plugin.Core
+import Web.Plugins.Core          (Plugin(..), getPluginRouteFn, getTheme)
 
 template :: ( EmbedAsChild IrcBotM headers
             , EmbedAsChild IrcBotM body

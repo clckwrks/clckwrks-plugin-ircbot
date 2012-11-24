@@ -26,7 +26,7 @@ import Network.IRC.Bot.Part.NickUser (nickUserPart)
 import Network.IRC.Bot.Part.Channels (initChannelsPart)
 import Network.IRC.Bot.PosixLogger   (posixLogger)
 import System.FilePath               ((</>))
-import Web.Plugin.Core               (Plugin(..), Plugins(..), When(..), addCleanup, addHandler, initPlugin, getConfig, getPluginRouteFn)
+import Web.Plugins.Core              (Plugin(..), Plugins(..), When(..), addCleanup, addHandler, initPlugin, getConfig, getPluginRouteFn)
 import Paths_clckwrks_plugin_ircbot  (getDataDir)
 
 ircBotHandler :: (IrcBotURL -> [(Text, Maybe Text)] -> Text)
