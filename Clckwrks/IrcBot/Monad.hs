@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleInstances, MultiParamTypeClasses, TypeSynonymInstances, OverloadedStrings, RecordWildCards, RankNTypes, FlexibleContexts, TypeFamilies #-}
 module Clckwrks.IrcBot.Monad where
 
-import Clckwrks                     (Clck(..), ClckT(..), ClckFormT, ClckState(..), ClckURL(..), mapClckT, addAdminMenu)
+import Clckwrks                     (Clck(..), ClckT(..), ClckFormT, ClckState(..), ClckURL(..), mapClckT)
 import Clckwrks.Acid
 import Clckwrks.IrcBot.Acid
 import Clckwrks.IrcBot.PreProcess   (ircBotCmd)
@@ -116,12 +116,3 @@ withIrcBotConfig mBasePath initIrcConfig pageTemplate' ircBotLogDir f =
                                , ircReconnect       = reconnect
                                })) `finally` (mapM_ killThread tids)
 -}
-
-
-addIrcBotAdminMenu :: ClckT IrcBotURL IO ()
-addIrcBotAdminMenu =
-    do reconnectURL <- showURL (IrcBotAdmin IrcBotReconnect)
-       settingsURL  <- showURL (IrcBotAdmin IrcBotSettings)
-       addAdminMenu ("IrcBot", [ ("Reconnect", reconnectURL)
-                               , ("Settings", settingsURL)
-                               ])

@@ -3,12 +3,13 @@ module Clckwrks.IrcBot.Plugin where
 
 import Clckwrks
 import Clckwrks.Plugin               (clckPlugin)
-import Clckwrks.IrcBot.URL           (IrcBotURL(..))
+import Clckwrks.IrcBot.URL           (IrcBotURL(..), IrcBotAdminURL(..))
 import Clckwrks.IrcBot.Acid          (GetIrcConfig(..), initialIrcBotState)
 import Clckwrks.IrcBot.Monad         (IrcBotConfig(..), runIrcBotT)
 import Clckwrks.IrcBot.Route         (routeIrcBot)
 import Clckwrks.IrcBot.Types         (IrcConfig(..), emptyIrcConfig)
 import Control.Concurrent            (ThreadId, killThread)
+import Control.Monad.State           (get)
 import Data.Acid                     as Acid
 import Data.Acid.Local               (createCheckpointAndClose, openLocalStateFrom)
 import Data.Text                     (Text)
@@ -96,6 +97,15 @@ initParts chans =
               , helloPart
               ]
 
+addIrcBotAdminMenu :: ClckT url IO ()
+addIrcBotAdminMenu =
+    do p <- plugins <$> get
+       (Just showIrcBotURL) <- getPluginRouteFn p (pluginName ircBotPlugin)
+       let reconnectURL = showIrcBotURL (IrcBotAdmin IrcBotReconnect) []
+           settingsURL  = showIrcBotURL (IrcBotAdmin IrcBotSettings) []
+       addAdminMenu ("IrcBot", [ ("Reconnect", reconnectURL)
+                               , ("Settings", settingsURL)
+                               ])
 
 ircBotPlugin :: Plugin IrcBotURL Theme (ClckT ClckURL (ServerPartT IO) Response) (ClckT ClckURL IO ()) ClckwrksConfig [TL.Text -> ClckT ClckURL IO TL.Text]
 ircBotPlugin = Plugin
@@ -103,7 +113,7 @@ ircBotPlugin = Plugin
     , pluginInit       = ircBotInit
     , pluginDepends    = []
     , pluginToPathInfo = toPathInfo
-    , pluginPostHook   = return ()
+    , pluginPostHook   = addIrcBotAdminMenu
     }
 
 plugin :: ClckPlugins -- ^ plugins
