@@ -2,6 +2,8 @@
 module Clckwrks.IrcBot.Plugin where
 
 import Clckwrks
+import Clckwrks.Menu.Types           (MenuLink(..))
+import Clckwrks.Monad                (ClckPluginsSt)
 import Clckwrks.Plugin               (clckPlugin)
 import Clckwrks.IrcBot.URL           (IrcBotURL(..), IrcBotAdminURL(..))
 import Clckwrks.IrcBot.Acid          (GetIrcConfig(..), initialIrcBotState)
@@ -16,6 +18,7 @@ import Data.Text                     (Text)
 import qualified Data.Text.Lazy      as TL
 import Data.Maybe                    (fromMaybe)
 import Data.Set                      (Set)
+import qualified Data.Set            as Set
 import Network                       (PortID(PortNumber))
 import Network.IRC.Bot.BotMonad      (BotMonad(..))
 import Network.IRC.Bot.Core          as IRC (BotConf(..), User(..), nullBotConf, simpleBot)
@@ -63,7 +66,13 @@ ircBotInit plugins =
 
 --       addPreProc plugins (ircBotCmd ircBotShowFn)
        addHandler plugins (pluginName ircBotPlugin) (ircBotHandler ircBotShowFn ircBotConfig)
+       addMenuCallback plugins (ircBotMenuCallback ircBotShowFn)
        return Nothing
+
+ircBotMenuCallback :: (IrcBotURL -> [(Text, Maybe Text)] -> Text)
+                   -> ClckT ClckURL IO (String, [MenuLink])
+ircBotMenuCallback ircBotShowURL =
+    return ("Irc Bot", [(MenuLink "IRC logs" (ircBotShowURL IrcLogs []))])
 
 botConnect :: Plugins theme n hook config st
            -> Acid.AcidState (Acid.EventState GetIrcConfig)
@@ -103,11 +112,11 @@ addIrcBotAdminMenu =
        (Just showIrcBotURL) <- getPluginRouteFn p (pluginName ircBotPlugin)
        let reconnectURL = showIrcBotURL (IrcBotAdmin IrcBotReconnect) []
            settingsURL  = showIrcBotURL (IrcBotAdmin IrcBotSettings) []
-       addAdminMenu ("IrcBot", [ ("Reconnect", reconnectURL)
-                               , ("Settings", settingsURL)
+       addAdminMenu ("IrcBot", [ (Set.fromList [Administrator, Editor], "Reconnect", reconnectURL)
+                               , (Set.fromList [Administrator, Editor], "Settings" , settingsURL)
                                ])
 
-ircBotPlugin :: Plugin IrcBotURL Theme (ClckT ClckURL (ServerPartT IO) Response) (ClckT ClckURL IO ()) ClckwrksConfig [TL.Text -> ClckT ClckURL IO TL.Text]
+ircBotPlugin :: Plugin IrcBotURL Theme (ClckT ClckURL (ServerPartT IO) Response) (ClckT ClckURL IO ()) ClckwrksConfig ClckPluginsSt
 ircBotPlugin = Plugin
     { pluginName       = "ircBot"
     , pluginInit       = ircBotInit
