@@ -2,7 +2,6 @@
 module Clckwrks.IrcBot.Plugin where
 
 import Clckwrks
-import Clckwrks.Menu.Types           (MenuLink(..))
 import Clckwrks.Monad                (ClckPluginsSt)
 import Clckwrks.Plugin               (clckPlugin)
 import Clckwrks.IrcBot.URL           (IrcBotURL(..), IrcBotAdminURL(..))
@@ -70,9 +69,9 @@ ircBotInit plugins =
        return Nothing
 
 ircBotMenuCallback :: (IrcBotURL -> [(Text, Maybe Text)] -> Text)
-                   -> ClckT ClckURL IO (String, [MenuLink])
+                   -> ClckT ClckURL IO (String, [NamedLink])
 ircBotMenuCallback ircBotShowURL =
-    return ("Irc Bot", [(MenuLink "IRC logs" (ircBotShowURL IrcLogs []))])
+    return ("Irc Bot", [(NamedLink "IRC logs" (ircBotShowURL IrcLogs []))])
 
 botConnect :: Plugins theme n hook config st
            -> Acid.AcidState (Acid.EventState GetIrcConfig)
