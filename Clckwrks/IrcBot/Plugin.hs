@@ -65,12 +65,12 @@ ircBotInit plugins =
 
 --       addPreProc plugins (ircBotCmd ircBotShowFn)
        addHandler plugins (pluginName ircBotPlugin) (ircBotHandler ircBotShowFn ircBotConfig)
-       addMenuCallback plugins (ircBotMenuCallback ircBotShowFn)
+       addNavBarCallback plugins (ircBotNavBarCallback ircBotShowFn)
        return Nothing
 
-ircBotMenuCallback :: (IrcBotURL -> [(Text, Maybe Text)] -> Text)
+ircBotNavBarCallback :: (IrcBotURL -> [(Text, Maybe Text)] -> Text)
                    -> ClckT ClckURL IO (String, [NamedLink])
-ircBotMenuCallback ircBotShowURL =
+ircBotNavBarCallback ircBotShowURL =
     return ("Irc Bot", [(NamedLink "IRC logs" (ircBotShowURL IrcLogs []))])
 
 botConnect :: Plugins theme n hook config st
