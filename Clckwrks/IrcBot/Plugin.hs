@@ -79,19 +79,21 @@ botConnect :: Plugins theme n hook config st
            -> IO (IO ())
 botConnect plugins ircBot ircBotLogDir =
     do ic@IrcConfig{..} <- Acid.query ircBot GetIrcConfig
-       let botConf = nullBotConf { channelLogger = Just $ posixLogger (Just ircBotLogDir) "#happs"
-                                 , IRC.host      = ircHost
-                                 , IRC.port      = PortNumber $ fromIntegral ircPort
-                                 , nick          = ircNick
-                                 , commandPrefix = ircCommandPrefix
-                                 , user          = ircUser
-                                 , channels      = ircChannels
-                                 , limits        = Just (5, 2000000)
-                                 }
-       ircParts <- initParts (channels botConf)
-       (tids, reconnect) <- simpleBot botConf ircParts
-       addCleanup plugins Always (mapM_ killThread tids)
-       return reconnect
+       if ircEnabled
+          then do let botConf = nullBotConf { channelLogger = Just $ posixLogger (Just ircBotLogDir) "#happs"
+                                            , IRC.host      = ircHost
+                                            , IRC.port      = PortNumber $ fromIntegral ircPort
+                                            , nick          = ircNick
+                                            , commandPrefix = ircCommandPrefix
+                                            , user          = ircUser
+                                            , channels      = ircChannels
+                                            , limits        = Just (5, 2000000)
+                                            }
+                  ircParts <- initParts (channels botConf)
+                  (tids, reconnect) <- simpleBot botConf ircParts
+                  addCleanup plugins Always (mapM_ killThread tids)
+                  return reconnect
+          else return (return ())
 
 initParts :: (BotMonad m) =>
              Set String  -- ^ set of channels to join
