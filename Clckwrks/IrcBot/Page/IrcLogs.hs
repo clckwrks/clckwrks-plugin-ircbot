@@ -21,6 +21,9 @@ ircLogs =
        urls     <- mapM (showURL . IrcLog) logFiles
        let logs = zip urls logFiles
        template "irc logs" ()
-         <ul>
-           <% mapM (\(url, logFile) -> <li><a href=url><% logFile %></a></li>) logs %>
-         </ul>
+         <% <h1>IRC Logs</h1>
+            <ul>
+             <% mapM (\(url, logFile) -> <li><a href=url><% logFile %></a></li>) logs %>
+            </ul>
+          %>
+
