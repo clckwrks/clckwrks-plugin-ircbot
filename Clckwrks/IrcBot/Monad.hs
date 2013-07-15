@@ -16,9 +16,11 @@ import qualified Data.Map            as Map
 import Data.Maybe                    (fromMaybe)
 import Data.Set                      (Set, insert)
 import qualified Data.Text           as T
+import qualified Data.Text.Lazy      as TL
 import Happstack.Server              (ServerPartT, Input)
 import Happstack.Server.Internal.Monads (FilterFun)
-import HSP                           (Attr((:=)), Attribute(MkAttr), EmbedAsChild(..), EmbedAsAttr(..), IsName(toName), XMLGenT(..), pAttrVal, XML)
+import HSP.XMLGenerator              (Attr((:=)), EmbedAsChild(..), EmbedAsAttr(..), IsName(toName), XMLGenT(..))
+import HSP.XML                       (Attribute(MkAttr), XML, fromStringLit, pAttrVal)
 import Network                       (PortID(PortNumber))
 import Network.IRC.Bot.BotMonad      (BotMonad(..))
 import Network.IRC.Bot.Core          (BotConf(..), User(..), nullBotConf, simpleBot)
@@ -58,15 +60,15 @@ type IrcBotForm = ClckFormT IrcFormError IrcBotM
 instance (Functor m, Monad m) => EmbedAsChild (IrcBotT m) IrcFormError where
     asChild e = asChild (show e)
 
-instance (IsName n) => EmbedAsAttr IrcBotM (Attr n IrcBotURL) where
+instance (IsName n TL.Text) => EmbedAsAttr IrcBotM (Attr n IrcBotURL) where
         asAttr (n := u) =
             do url <- showURL u
-               asAttr $ MkAttr (toName n, pAttrVal (T.unpack url))
+               asAttr $ MkAttr (toName n, pAttrVal (TL.fromStrict url))
 
-instance (IsName n) => EmbedAsAttr IrcBotM (Attr n ClckURL) where
+instance (IsName n TL.Text) => EmbedAsAttr IrcBotM (Attr n ClckURL) where
         asAttr (n := url) =
             do showFn <- ircBotClckURL <$> ask
-               asAttr $ MkAttr (toName n, pAttrVal (T.unpack $ showFn url []))
+               asAttr $ MkAttr (toName n, pAttrVal (TL.fromStrict $ showFn url []))
 
 runIrcBotT :: IrcBotConfig -> IrcBotT m a -> ClckT IrcBotURL m a
 runIrcBotT mc m = mapClckT f m

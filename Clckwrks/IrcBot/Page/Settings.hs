@@ -1,5 +1,5 @@
 {-# LANGUAGE RecordWildCards #-}
-{-# OPTIONS_GHC -F -pgmFtrhsx #-}
+{-# OPTIONS_GHC -F -pgmFhsx2hs #-}
 module Clckwrks.IrcBot.Page.Settings where
 
 import Control.Applicative      ((<$>), (<*>), (<*))
@@ -17,9 +17,11 @@ import           Data.Map       (Map)
 import qualified Data.Map       as Map
 import           Data.Set       (Set)
 import qualified Data.Set       as Set
+import Data.Text.Lazy           (pack)
 import Data.Word                (Word16)
 import Happstack.Server         (Response, ok, setResponseCode, toResponse)
-import HSP
+import HSP.XML
+import HSP.XMLGenerator
 import Network.IRC.Bot          (User(..))
 import Numeric                  (readDec)
 import Text.Reform              ((++>), mapView, transformEither)
@@ -33,7 +35,7 @@ ircBotSettings here =
        oldConfig <- query GetIrcConfig
        template "IrcBot Settings" () $
                 <%>
-                 <% reform (form action) "ibs" updateSettings Nothing (ircBotSettingsForm oldConfig) %>
+                 <% reform (form action) (pack "ibs") updateSettings Nothing (ircBotSettingsForm oldConfig) %>
                 </%>
     where
       updateSettings :: IrcConfig -> IrcBotM Response

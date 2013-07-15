@@ -1,4 +1,4 @@
-{-# OPTIONS_GHC -F -pgmFtrhsx #-}
+{-# OPTIONS_GHC -F -pgmFhsx2hs #-}
 module Clckwrks.IrcBot.Page.Reconnect where
 
 import Control.Applicative      ((<$>), (<*))
@@ -10,8 +10,10 @@ import Clckwrks.IrcBot.Monad    (IrcBotM(..), IrcBotForm, IrcBotConfig(..))
 import Clckwrks.IrcBot.URL      (IrcBotURL)
 import           Data.Map       (Map)
 import qualified Data.Map       as Map
+import Data.Text.Lazy           (pack)
 import Happstack.Server         (Response, ok, setResponseCode, toResponse)
-import HSP
+import HSP.XML
+import HSP.XMLGenerator
 import Text.Reform              ((++>))
 import Text.Reform.Happstack    (reform)
 import Text.Reform.HSP.String   (inputSubmit, form)
@@ -22,7 +24,7 @@ ircReconnectPage here =
     do action <- showURL here
        template "Force Reconnect" () $
                 <%>
-                 <% reform (form action) "ir" forceReconnect Nothing forceReconnectForm %>
+                 <% reform (form action) (pack "ir") forceReconnect Nothing forceReconnectForm %>
                 </%>
     where
       forceReconnect :: Maybe String -> IrcBotM Response

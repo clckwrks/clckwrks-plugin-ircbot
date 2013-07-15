@@ -1,5 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# OPTIONS_GHC -F -pgmFtrhsx #-}
+{-# OPTIONS_GHC -F -pgmFhsx2hs #-}
 module Clckwrks.IrcBot.Page.IrcLogs where
 
 import Control.Applicative   ((<$>))
@@ -11,7 +11,8 @@ import Clckwrks.IrcBot.URL
 import Data.List (sort)
 import System.Directory
 import System.FilePath
-import HSP
+import HSP.XMLGenerator
+import HSP.XML
 import Happstack.Server.HSP.HTML
 
 ircLogs :: IrcBotM Response

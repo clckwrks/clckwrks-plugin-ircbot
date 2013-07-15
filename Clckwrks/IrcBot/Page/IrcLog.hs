@@ -1,4 +1,4 @@
-{-# OPTIONS_GHC -F -pgmFtrhsx #-}
+{-# OPTIONS_GHC -F -pgmFhsx2hs #-}
 module Clckwrks.IrcBot.Page.IrcLog where
 
 import Control.Applicative   ((<$>))
@@ -12,7 +12,8 @@ import Data.Text.IO as T (readFile)
 import Happstack.Server.FileServe.BuildingBlocks (isSafePath)
 import System.Directory
 import System.FilePath
-import HSP
+import HSP.XMLGenerator
+import HSP.XML
 import Happstack.Server
 import Happstack.Server.HSP.HTML
 
