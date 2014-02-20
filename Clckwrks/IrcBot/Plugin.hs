@@ -13,6 +13,8 @@ import Control.Concurrent            (ThreadId, killThread)
 import Control.Monad.State           (get)
 import Data.Acid                     as Acid
 import Data.Acid.Local               (createCheckpointAndClose, openLocalStateFrom)
+import Data.ByteString               (ByteString)
+import Data.ByteString.Char8         as C
 import Data.Text                     (Text)
 import qualified Data.Text.Lazy      as TL
 import Data.Maybe                    (fromMaybe)
@@ -83,10 +85,10 @@ botConnect plugins ircBot ircBotLogDir =
           then do let botConf = nullBotConf { channelLogger = Just $ posixLogger (Just ircBotLogDir) "#happs"
                                             , IRC.host      = ircHost
                                             , IRC.port      = PortNumber $ fromIntegral ircPort
-                                            , nick          = ircNick
+                                            , nick          = C.pack $ ircNick
                                             , commandPrefix = ircCommandPrefix
                                             , user          = ircUser
-                                            , channels      = ircChannels
+                                            , channels      = Set.map C.pack ircChannels
                                             , limits        = Just (5, 2000000)
                                             }
                   ircParts <- initParts (channels botConf)
@@ -96,7 +98,7 @@ botConnect plugins ircBot ircBotLogDir =
           else return (return ())
 
 initParts :: (BotMonad m) =>
-             Set String  -- ^ set of channels to join
+             Set ByteString  -- ^ set of channels to join
           -> IO [m ()]
 initParts chans =
     do (_, channelsPart) <- initChannelsPart chans

@@ -18,7 +18,7 @@ import Web.Routes (showURL)
 parseAttr :: Text -> Parser ()
 parseAttr name =
     do skipMany space
-       stringCI name
+       asciiCI name
        skipMany space
        char '='
        skipMany space

@@ -11,6 +11,7 @@ import Clckwrks.IrcBot.Acid     (GetIrcConfig(..), SetIrcConfig(..))
 import Clckwrks.IrcBot.Monad    (IrcBotM(..), IrcBotConfig(..), IrcBotForm, IrcFormError(..))
 import Clckwrks.IrcBot.Types    (IrcConfig(..))
 import Clckwrks.IrcBot.URL      (IrcBotURL)
+import qualified Data.ByteString.Char8 as C
 import Data.Char                (isSpace)
 import Data.List                (intercalate)
 import           Data.Map       (Map)
@@ -52,10 +53,10 @@ ircBotSettingsForm IrcConfig{..} =
       port     = li $ label "irc port"   ++> inputText (show ircPort) `transformEither` toWord16
       nick     = li $ label "nickname"   ++> inputText (ircNick)
       cp       = li $ label "cmd prefix" ++> inputText (ircCommandPrefix)
-      usrnm    = li $ label "username"   ++> inputText (username ircUser)
+      usrnm    = li $ label "username"   ++> (C.pack <$> inputText (C.unpack $ username ircUser))
       hstnm    = li $ label "hostname"   ++> inputText (hostname ircUser)
       srvrnm   = li $ label "servername" ++> inputText (servername ircUser)
-      rlnm     = li $ label "realname"   ++> inputText (realname ircUser)
+      rlnm     = li $ label "realname"   ++> (C.pack <$> inputText (C.unpack $ realname ircUser))
       user     = User <$> usrnm <*> hstnm <*> srvrnm <*> rlnm
       channels = li $ label "channels (comma separated)"   ++> inputText (fromSet ircChannels) `transformEither` toSet
       enabled  = li $ label "enable bot" ++> inputCheckbox ircEnabled
