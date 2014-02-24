@@ -5,6 +5,7 @@ module Clckwrks.IrcBot.Types
     , emptyIrcConfig
     ) where
 
+import Data.ByteString.Char8 (pack)
 import Data.Data             (Data, Typeable)
 import Data.Word             (Word16)
 import Data.IxSet            (Indexable(..), ixSet, ixFun)
@@ -13,6 +14,22 @@ import Data.Set              (Set, empty)
 import Data.Text             (Text)
 import Network.IRC.Bot.Types (User(..))
 import Web.Routes            (PathInfo(..))
+
+data User_0 = User_0
+    { username_0   :: String    -- ^ username on client system
+    , hostname_0   :: String  -- ^ hostname of client system
+    , servername_0 :: String  -- ^ irc server client is connected to
+    , realname_0   :: String    -- ^ client's real name
+    }
+    deriving (Data, Typeable, Eq, Ord, Read, Show)
+$(deriveSafeCopy 0 'base ''User_0)
+
+$(deriveSafeCopy 1 'extension ''User)
+
+instance Migrate User where
+    type MigrateFrom User = User_0
+    migrate (User_0 un hs sn rn) =
+        (User (pack un) hs sn (pack rn))
 
 data IrcConfig_0 = IrcConfig_0
     { ircHost_0          :: String
@@ -23,7 +40,6 @@ data IrcConfig_0 = IrcConfig_0
     , ircChannels_0      :: Set String
     }
     deriving (Eq, Ord, Read, Show, Data, Typeable)
-$(deriveSafeCopy 0 'base ''User)
 $(deriveSafeCopy 0 'base ''IrcConfig_0)
 
 data IrcConfig = IrcConfig
