@@ -1,5 +1,5 @@
 Name:                clckwrks-plugin-ircbot
-Version:             0.6.15
+Version:             0.6.16
 Synopsis:            ircbot plugin for clckwrks
 Homepage:            http://clckwrks.com/
 License:             BSD3
@@ -40,7 +40,7 @@ Library
 
   Build-depends:
     base                    < 5,
-    acid-state             >= 0.12 && < 0.14,
+    acid-state             >= 0.12 && < 0.15,
     attoparsec             >= 0.10 && < 0.14,
     blaze-html             >= 0.5 && < 0.9,
     bytestring             >= 0.10 && < 0.11,
