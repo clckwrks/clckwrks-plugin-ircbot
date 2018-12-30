@@ -112,7 +112,7 @@ initParts chans =
 addIrcBotAdminMenu :: ClckT url IO ()
 addIrcBotAdminMenu =
     do p <- plugins <$> get
-       (Just showIrcBotURL) <- getPluginRouteFn p (pluginName ircBotPlugin)
+       ~(Just showIrcBotURL) <- getPluginRouteFn p (pluginName ircBotPlugin)
        let reconnectURL = showIrcBotURL (IrcBotAdmin IrcBotReconnect) []
            settingsURL  = showIrcBotURL (IrcBotAdmin IrcBotSettings) []
        addAdminMenu ("IrcBot", [ (Set.fromList [Administrator, Editor], "Reconnect", reconnectURL)
